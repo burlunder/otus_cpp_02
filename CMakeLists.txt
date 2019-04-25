@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7)
-project(ip_filter VERSION 0.1..$ENV{TRAVIS_BUILD_NUMBER})
+project(ip_filter VERSION 0.1.$ENV{TRAVIS_BUILD_NUMBER})
 set_target_properties(ip_filter PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
