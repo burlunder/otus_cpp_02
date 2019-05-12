@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 project(ip_filter VERSION 0.1.$ENV{TRAVIS_BUILD_NUMBER})
-set_target_properties(ip_filter
-  PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra"
-)
+set(CMAKE_CXX_STANDARD 17)
 
 add_executable(ip_filter ip_filter.cpp)
 install(TARGETS ip_filter RUNTIME DESTINATION bin)
