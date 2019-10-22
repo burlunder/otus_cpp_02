@@ -1,16 +1,25 @@
 dist: xenial
 language: cpp
 compiler: clang
-before_script:
-- sudo apt update
-- sudo apt install libboost-test-dev libspdlog-dev -y
+addons:
+  apt:
+    packages:
+    - libboost-test-dev
+    - libspdlog-dev
 script:
 - cmake .
 - cmake --build .
+- cmake --build . --target test
 - cmake --build . --target package
+
+before_deploy:
+  - sed -i "s/__VERSION__/$TRAVIS_BUILD_NUMBER/g" bintray-descriptor.json
+  # - cat bintray-descriptor.json
+
 deploy:
-  provider: bintray
-  user: ${BINTRAY_USER}
-  key: ${BINTRAY_API_KEY}
-  file: "${TRAVIS_BUILD_DIR}/descriptor.json"
   skip_cleanup: true
+  provider: bintray
+  file: bintray-descriptor.json
+  user: $BINTRAY_USER
+  key: $BINTRAY_API_KEY
+
