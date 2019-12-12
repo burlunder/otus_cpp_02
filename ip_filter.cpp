@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -6,20 +7,41 @@
 #include <vector>
 
 using namespace std;
+using ip_type = array<int, 4>;
+using ip_pool_type = vector<array<int, 4>>;
 
-vector<string> split(const string &str, char d) {
-  vector<string> r;
+/* static vector<string> split(const string &str, char d) { */
+/*   vector<string> r; */
 
+/*   string::size_type start = 0; */
+/*   string::size_type stop = str.find_first_of(d); */
+/*   while (stop != string::npos) { */
+/*     r.push_back(str.substr(start, stop - start)); */
+
+/*     start = stop + 1; */
+/*     stop = str.find_first_of(d, start); */
+/*   } */
+
+/*   r.push_back(str.substr(start)); */
+
+/*   return r; */
+/* } */
+
+// directly getting ip substring into ip_type
+static ip_type split(const string &str, char d) {
+  ip_type r;
   string::size_type start = 0;
   string::size_type stop = str.find_first_of(d);
-  while (stop != string::npos) {
-    r.push_back(str.substr(start, stop - start));
+
+  auto it = 0;
+  while (it < size(r)) {
+    cout << it << endl;
+    r.at(it) = stoi(str.substr(start, stop - start));
 
     start = stop + 1;
     stop = str.find_first_of(d, start);
+    it++;
   }
-
-  r.push_back(str.substr(start));
 
   return r;
 }
@@ -36,91 +58,100 @@ template <typename T> void output_pool(T ip_pool) {
   }
 }
 
+/* bool match_ip(ip_type ip, int ip_oct) { */
+/*   if (ip.front() == ip_oct) { */
+/*     /1* std::cout << "ip.front(): " << ip.front() << std::endl; *1/ */
+/*     return true; */
+/*   } */
+/*   return false; */
+/* }; */
+
+/* template <typename... Args> */
+/* bool match_ip(ip_type ip, int ip_oct, Args... args) { */
+/*   if (match_ip(ip, ip_oct)) { */
+/*     std::rotate(ip.begin(), ip.begin() + 1, ip.end()); */
+
+/*     if (match_ip(ip, args...)) { */
+/*       std::rotate(ip.rbegin(), ip.rbegin() + 1, ip.rend()); */
+/*       return true; */
+/*     } */
+/*     return false; */
+/*   }; */
+/*   return false; */
+/* } */
+
+/* ip_pool_type filter_any(ip_pool_type pool, int ip_oct) { */
+/*   // */
+/*   ip_pool_type new_pool; */
+/*   for (auto ip = pool.cbegin(); ip != pool.cend(); ++ip) { */
+/*     for (auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part) { */
+
+/*       auto ip_part_v = *ip_part; */
+/*       if (ip_part_v == ip_oct) { */
+/*         new_pool.push_back(*ip); */
+/*       } */
+/*     } */
+/*   } */
+/*   return new_pool; */
+/* } */
+
+/* ip_pool_type filter(ip_pool_type pool, int ip_oct) { */
+/*   ip_pool_type new_pool; */
+/*   for (auto ip : pool) { */
+/*     if (match_ip(ip, ip_oct)) { */
+/*       new_pool.push_back(ip); */
+/*     } */
+/*   } */
+/*   return new_pool; */
+/* } */
+
+/* template <typename... Args> */
+/* ip_pool_type filter(ip_pool_type pool, int ip_oct, Args... args) { */
+/*   ip_pool_type new_pool; */
+/*   for (auto ip : pool) { */
+/*     if (match_ip(ip, ip_oct, args...)) { */
+/*       new_pool.push_back(ip); */
+/*     } */
+/*   } */
+/*   return new_pool; */
+/* } */
+
 int main(int argc, char const *argv[]) {
   try {
-    vector<vector<int>> ip_pool;
+    ip_pool_type ip_pool;
 
+    /* for (string line; getline(cin, line);) { */
+    /*   auto v_line = split(line, '\t').at(0); */
+    /*   ip_type ip; */
+
+    /*   for (auto ip_oct : (split(v_line, '.'))) { */
+    /*     ip.push_back(stoi(ip_oct)); // push_back with (str -> int) */
+    /*   } */
+
+    /*   ip_pool.push_back(ip); */
+    /* } */
     for (string line; getline(cin, line);) {
-      vector<string> v = split(line, '\t');
-
-      /* for (auto i : v) { */
-      /*   cout << "." << i; */
-      /* } */
-      /* cout << endl; */
-
-      vector<int> vi;
-      for (string s : (split(v.at(0), '.'))) {
-        vi.push_back(stoi(s));
-      }
-      ip_pool.push_back(vi);
+      auto ip_s = split(line, '.');
+      ip_pool.push_back(ip_s);
     }
 
     // TODO reverse lexicographically sort
-    /* sort(ip_pool.begin(), ip_pool.end(), greater<vector<string>>()); */
+    // is it really lexicographical ?
+    sort(ip_pool.begin(), ip_pool.end(), greater<ip_type>());
     output_pool(ip_pool);
-
-    // 222.173.235.246
-    // 222.130.177.64
-    // 222.82.198.61
-    // ...
-    // 1.70.44.170
-    // 1.29.168.152
-    // 1.1.234.8
 
     // TODO filter by first byte and output
     // ip = filter(1)
-
-    // 1.231.69.33
-    // 1.87.203.225
-    // 1.70.44.170
-    // 1.29.168.152
-    // 1.1.234.8
+    /* output_pool(filter(ip_pool, 1)); */
 
     // TODO filter by first and second bytes and output
     // ip = filter(46, 70)
-
-    // 46.70.225.39
-    // 46.70.147.26
-    // 46.70.113.73
-    // 46.70.29.76
+    /* output_pool(filter(ip_pool, 46, 70)); */
 
     // TODO filter by any byte and output
     // ip = filter_any(46)
+    /* output_pool(filter_any(ip_pool, 46)); */
 
-    // 186.204.34.46
-    // 186.46.222.194
-    // 185.46.87.231
-    // 185.46.86.132
-    // 185.46.86.131
-    // 185.46.86.131
-    // 185.46.86.22
-    // 185.46.85.204
-    // 185.46.85.78
-    // 68.46.218.208
-    // 46.251.197.23
-    // 46.223.254.56
-    // 46.223.254.56
-    // 46.182.19.219
-    // 46.161.63.66
-    // 46.161.61.51
-    // 46.161.60.92
-    // 46.161.60.35
-    // 46.161.58.202
-    // 46.161.56.241
-    // 46.161.56.203
-    // 46.161.56.174
-    // 46.161.56.106
-    // 46.161.56.106
-    // 46.101.163.119
-    // 46.101.127.145
-    // 46.70.225.39
-    // 46.70.147.26
-    // 46.70.113.73
-    // 46.70.29.76
-    // 46.55.46.98
-    // 46.49.43.85
-    // 39.46.86.85
-    // 5.189.203.46
   } catch (const exception &e) {
     cerr << e.what() << endl;
   }
