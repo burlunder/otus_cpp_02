@@ -1,6 +1,6 @@
 {
     "package": {
-        "name": "ip_filter",
+        "name": "homeworks",
         "repo": "otus-cpp",
         "subject": "burlunder",
         "vcs_url": "https://github.com/burlunder/otus_cpp.git"
