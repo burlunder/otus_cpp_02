@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.7)
+if (NOT DEFINED ENV{TRAVIS_BUILD_NUMBER})
+    set (ENV{TRAVIS_BUILD_NUMBER} "42")
+endif()
 project(ip_filter VERSION 0.1.$ENV{TRAVIS_BUILD_NUMBER})
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 add_executable(ip_filter ip_filter.cpp)
 install(TARGETS ip_filter RUNTIME DESTINATION bin)
