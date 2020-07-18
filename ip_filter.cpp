@@ -7,12 +7,12 @@
 #include <vector>
 
 using namespace std;
-using ip_type = array<int, 4>;
-using ip_pool_type = vector<array<int, 4>>;
+using ip_t = array<int, 4>;
+using ip_pool_t = vector<array<int, 4>>;
 
-// directly getting ip substring into ip_type
-static ip_type split(const string &str, char d) {
-  ip_type r;
+// directly getting ip substring into ip_t
+static ip_t split(const string &str, char d) {
+  ip_t r;
   string::size_type start = 0;
   string::size_type stop = str.find_first_of(d);
 
@@ -28,7 +28,7 @@ static ip_type split(const string &str, char d) {
   return r;
 }
 
-template <typename T> void output_pool(T ip_pool) {
+template <typename T> void const output_pool(const T &ip_pool) {
   for (auto ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip) {
     for (auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part) {
       if (ip_part != ip->cbegin()) {
@@ -40,7 +40,7 @@ template <typename T> void output_pool(T ip_pool) {
   }
 }
 
-bool match_ip(ip_type ip, int ip_oct) {
+bool match_ip(const ip_t &ip, const int &ip_oct) {
   if (ip.front() == ip_oct) {
     /* std::cout << "ip.front(): " << ip.front() << std::endl; */
     return true;
@@ -48,8 +48,7 @@ bool match_ip(ip_type ip, int ip_oct) {
   return false;
 };
 
-template <typename... Args>
-bool match_ip(ip_type ip, int ip_oct, Args... args) {
+template <typename... Args> bool match_ip(ip_t ip, int ip_oct, Args... args) {
   if (match_ip(ip, ip_oct)) {
     std::rotate(ip.begin(), ip.begin() + 1, ip.end());
 
@@ -62,8 +61,8 @@ bool match_ip(ip_type ip, int ip_oct, Args... args) {
   return false;
 }
 
-ip_pool_type filter_any(ip_pool_type pool, int ip_oct) {
-  ip_pool_type new_pool;
+ip_pool_t filter_any(const ip_pool_t &pool, const int &ip_oct) {
+  ip_pool_t new_pool;
   for (auto ip = pool.cbegin(); ip != pool.cend(); ++ip) {
     for (auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part) {
 
@@ -77,8 +76,8 @@ ip_pool_type filter_any(ip_pool_type pool, int ip_oct) {
   return new_pool;
 }
 
-ip_pool_type filter(ip_pool_type pool, int ip_oct) {
-  ip_pool_type new_pool;
+ip_pool_t filter(const ip_pool_t &pool, const int &ip_oct) {
+  ip_pool_t new_pool;
   for (auto ip : pool) {
     if (match_ip(ip, ip_oct)) {
       new_pool.push_back(ip);
@@ -88,8 +87,8 @@ ip_pool_type filter(ip_pool_type pool, int ip_oct) {
 }
 
 template <typename... Args>
-ip_pool_type filter(ip_pool_type pool, int ip_oct, Args... args) {
-  ip_pool_type new_pool;
+ip_pool_t filter(const ip_pool_t &pool, const int &ip_oct, Args... args) {
+  ip_pool_t new_pool;
   for (auto ip : pool) {
     if (match_ip(ip, ip_oct, args...)) {
       new_pool.push_back(ip);
@@ -100,7 +99,7 @@ ip_pool_type filter(ip_pool_type pool, int ip_oct, Args... args) {
 
 int main(int argc, char const *argv[]) {
   try {
-    ip_pool_type ip_pool;
+    ip_pool_t ip_pool;
 
     for (string line; getline(cin, line);) {
       auto ip_s = split(line, '.');
@@ -109,7 +108,7 @@ int main(int argc, char const *argv[]) {
 
     // TODO reverse lexicographically sort
     // is it really lexicographical ?
-    sort(ip_pool.begin(), ip_pool.end(), greater<ip_type>());
+    sort(ip_pool.begin(), ip_pool.end(), greater<ip_t>());
     output_pool(ip_pool);
 
     // TODO filter by first byte and output
